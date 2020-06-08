@@ -10,19 +10,20 @@ const isDev = !isProd
 const filename = ext => isDev ? `bundle.${ext}` : `bundle.[hash].${ext}`
 
 const jsLoaders = () => {
-    const loaders = [
-        {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env']
-            }
-        }
-    ]
-    if (isDev) {
-        loaders.push('eslint-loader')
+  const loaders = [
+    {
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-env'],
+        plugins: ['@babel/plugin-proposal-class-properties']
+      }
     }
+  ]
+  if (isDev) {
+    loaders.push('eslint-loader')
+  }
 
-    return loaders
+  return loaders
 }
 
 module.exports = {
@@ -43,25 +44,25 @@ module.exports = {
   // read about devtool
   devtool: isDev ? 'source-map' : false,
   devServer: {
-      port: 4000,
-      hot: isDev
+    port: 4000,
+    hot: isDev
   },
   plugins: [
     new CleanWebpackPlugin(),
     new HTMLWebpackPlugin({
       template: 'index.html',
       minify: {
-          removeComments: isProd,
-          collapseWhitespace: isProd
+        removeComments: isProd,
+        collapseWhitespace: isProd
       }
     }),
     new CopyPlugin({
-        patterns: [
-            {
-                from: path.resolve(__dirname, 'src/favicon.ico'),
-                to: path.resolve(__dirname, 'dist')
-            }
-        ]
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/favicon.ico'),
+          to: path.resolve(__dirname, 'dist')
+        }
+      ]
     }),
     new MiniCssExtractPlugin({
       filename: filename('css')
@@ -73,11 +74,11 @@ module.exports = {
         test: /\.s[ac]ss$/i,
         use: [
           {
-              loader: MiniCssExtractPlugin.loader,
-              options: {
-                  hmr: isDev,
-                  reloadAll: true
-              }
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: isDev,
+              reloadAll: true
+            }
           },
           'css-loader',
           'sass-loader'
