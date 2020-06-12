@@ -21,7 +21,6 @@ export class DomListener {
       // ТОже самое, что и addEventListener
       // This указывает на Объект, в котором найдено событие
       this.$root.on(listener, this[method])
-      console.log(`Method ${method} has been implemented to ${name}`);  
     })
   }
 
