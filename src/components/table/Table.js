@@ -4,7 +4,10 @@ import { resizeHandler } from "./table.resize"
 import { shouldResize, isCell, 
   selecting, nextSelector } from "./table.functions";
 import { TableSelection } from "./TableSelection";
+import {resizeActions, textActions} from '@/redux/actions'
 import {$} from '@core/dom'
+import { defaultStyles } from "../../constants";
+import { parse } from "../../core/parse";
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
@@ -12,14 +15,14 @@ export class Table extends ExcelComponent {
   constructor($root, options) {
     super($root, {
       name: 'Table',
-      listeners: ['mousedown', 'keydown', 'input'],
+      listeners: ['mousedown', 'keydown', 'input', 'click'],
       ...options
     })
     this.rowCount = 25
   }
 
   toHTML() {
-    return createTable(this.rowCount)
+    return createTable(this.rowCount, this.store.getState())
   }
 
   prepare() {
@@ -29,11 +32,24 @@ export class Table extends ExcelComponent {
   init() {
     super.init()
     this.selectCell(this.$root.find('[data-id="0:0"]'))
-    this.$on('formula:input', text => {
-      this.selection.current.text(text)
+    this.$on('formula:input', value => {
+      this.selection.current
+          .attr('data-value', value)
+          .text(parse(value))
+      this.updateTextInStore(value)
     })
+
     this.$on('formula:enter', () => {
       this.selection.current.addFocus()
+    })
+
+    this.$on('toolbar:applyStyle', value => {
+      this.selection.applyStyle(value)
+      console.log('ids', this.selection.selectedIds)
+      this.$dispatch(textActions.applyStyle({
+        value,
+        ids: this.selection.selectedIds
+      }))
     })
     // $cell.dropFocus()
   }
@@ -41,16 +57,44 @@ export class Table extends ExcelComponent {
   selectCell($cell) {
     this.selection.select($cell)
     this.$emit('table:select', $cell)
+    const styles = $cell.getStyles(Object.keys(defaultStyles))
+    this.$dispatch(textActions.changeStyles(styles))
+  }
+
+  onClick(event) {
+    if (isCell(event)) {
+      this.selectCell($(event.target))
+    }
   }
 
   onInput(event) {
-    this.$emit('table:input', $(event.target))
+    this.updateTextInStore($(event.target).text())
+    // this.$emit('table:input', $(event.target))
+  }
+
+  updateTextInStore(value) {
+    this.$dispatch(textActions.changeText({
+      id: this.selection.current.id(),
+      value
+    }))
+  }
+  
+  async resizeTable(event) {
+    try {
+      const {type, value, id} = await resizeHandler(this.$root, event)
+      const method = type === 'col' 
+      ? resizeActions.columnResize
+      : resizeActions.rowResize
+      this.$dispatch(method({value, id}))
+    } catch (e) {
+      console.warn('Resize error', e.message)
+    }
   }
 
   onMousedown(event) {
     // event.preventDefault()
     if (shouldResize(event)) {
-      resizeHandler(this.$root, event)
+      this.resizeTable(event)
     } else if (isCell(event)) {
       selecting(event, this.$root, this.selection)
       this.$emit('table:select', $(event.target))

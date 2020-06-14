@@ -15,7 +15,8 @@
         "quotes":"off",
         "no-trailing-spaces": "off",
         "operator-linebreak": "off",
-        "no-debugger": 0
+        "no-debugger": 0,
+        "no-case-declarations": "off"
     },
     "extends": ["eslint:recommended", "google"]
 }
