@@ -1,9 +1,10 @@
 import { ExcelStateComponent } from "@core/ExcelStateComponent";
 import {createHeader} from "./header.template"
-import { isInput } from "./header.functions";
+import { isInput, isDelete, isExit } from "./header.functions";
 import {$} from '@core/dom'
 import { textActions } from "../../redux/actions";
-import { debounce } from "../../core/utils";
+import { debounce, deleteFromStorage } from "../../core/utils";
+import { ActiveRoute } from "../../core/routes/ActiveRoute";
 
 export class Header extends ExcelStateComponent {
   static className = 'excel__header'
@@ -31,6 +32,15 @@ export class Header extends ExcelStateComponent {
   onClick(event) {
     if (isInput(event)) {
       event.target.select()
+    } else if (isDelete(event)) {
+      const decision = confirm('Вы действительно хотите удалить таблицу?')
+      if (decision) {
+        deleteFromStorage(`excel:${ActiveRoute.param}`)
+        ActiveRoute.deletePath()
+      }
+    } else if (isExit(event)) {
+      console.log('qqqq')
+      ActiveRoute.deletePath()
     }
   }
 

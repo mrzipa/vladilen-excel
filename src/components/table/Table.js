@@ -45,7 +45,6 @@ export class Table extends ExcelComponent {
 
     this.$on('toolbar:applyStyle', value => {
       this.selection.applyStyle(value)
-      console.log('ids', this.selection.selectedIds)
       this.$dispatch(textActions.applyStyle({
         value,
         ids: this.selection.selectedIds
