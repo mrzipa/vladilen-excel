@@ -1,5 +1,5 @@
 import { COLUMN_RESIZE, ROW_RESIZE, CHANGE_TEXT,
-  CHANGE_STYLES, APPLY_STYLE, CHANGE_NAME } from "./types";
+  CHANGE_STYLES, APPLY_STYLE, CHANGE_NAME, UPDATE_DATE } from "./types";
 
 // Action Creators
 export const resizeActions = {
@@ -41,6 +41,14 @@ export const textActions = {
     return {
       type: CHANGE_NAME,
       data
+    }
+  }
+}
+
+export const dateActions = {
+  updateDate() {
+    return {
+      type: UPDATE_DATE
     }
   }
 }

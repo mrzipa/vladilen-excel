@@ -1,5 +1,5 @@
 import { COLUMN_RESIZE, ROW_RESIZE, CHANGE_TEXT, 
-  CHANGE_STYLES, APPLY_STYLE, CHANGE_NAME } from "./types"
+  CHANGE_STYLES, APPLY_STYLE, CHANGE_NAME, UPDATE_DATE } from "./types"
 
 export function rootReducer(state, action) {
   let prevState
@@ -33,6 +33,8 @@ export function rootReducer(state, action) {
       }
     case CHANGE_NAME:
       return {...state, currentName: action.data}
+    case UPDATE_DATE:
+      return {...state, openedDate: new Date().toJSON()}
     default: return state
   }
 }
