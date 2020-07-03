@@ -1,5 +1,5 @@
 import { Router } from "./Router"
-import { Page } from "../Page"
+import { Page } from "../page/Page"
 
 class DashboardPage extends Page {
   getRoot() {
@@ -8,9 +8,7 @@ class DashboardPage extends Page {
     return root
   }
 }
-class ExcelPage extends Page {
-
-}
+class ExcelPage extends Page { }
 
 
 describe('Router:', () => {
