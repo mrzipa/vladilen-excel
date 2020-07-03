@@ -1,4 +1,4 @@
-import {isEqual} from '@core/utils'
+import { isEqual } from '@core/utils'
 
 
 export class StoreSubscriber {
@@ -16,7 +16,7 @@ export class StoreSubscriber {
         if (!isEqual(this.prevState[key], state[key])) {
           components.forEach(component => {
             if (component.isWatching(key)) {
-              const changes = {[key]: state[key]}
+              const changes = { [key]: state[key] }
               component.storeChanged(changes)
             }
           })
@@ -31,6 +31,6 @@ export class StoreSubscriber {
   }
 
   unsubscribeFromStore() {
-    this.sub.unsibscribe()
+    this.sub.unsubscribe()
   }
 }
